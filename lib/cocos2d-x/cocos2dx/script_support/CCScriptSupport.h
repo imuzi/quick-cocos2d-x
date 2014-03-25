@@ -221,7 +221,7 @@ public:
     
     virtual int executeMenuItemEvent(CCMenuItem* pMenuItem) = 0;
     /** Execute a notification event function */
-    virtual int executeNotificationEvent(CCNotificationCenter* pNotificationCenter, const char* pszName, CCObject *obj = NULL) = 0;
+    virtual int executeNotificationEvent(CCNotificationCenter* pNotificationCenter, const char* pszName) = 0;
     
     /** execute a callfun event */
     virtual int executeCallFuncActionEvent(CCCallFunc* pAction, CCObject* pTarget = NULL) = 0;
@@ -245,6 +245,16 @@ public:
      * @return true if the assert was handled by the script engine, false otherwise.
      */
     virtual bool handleAssert(const char *msg) = 0;
+    
+    /**
+     *
+     */
+    enum ConfigType
+    {
+        NONE,
+        COCOSTUDIO,
+    };
+    virtual bool parseConfig(ConfigType type, const std::string& str) = 0;
 };
 
 /**

@@ -66,7 +66,7 @@ ccLanguageType CCApplication::getCurrentLanguage()
     std::string languageName = getCurrentLanguageJNI();
     const char* pLanguageName = languageName.c_str();
     ccLanguageType ret = kLanguageEnglish;
-	
+
 	// modify by guorui.chen
 	// added current language is simple or traditional
     // if (0 == strcmp("zh", pLanguageName))
@@ -74,9 +74,9 @@ ccLanguageType CCApplication::getCurrentLanguage()
     //     ret = kLanguageChinese;
     // }
     if (0 == strcmp("zh-Hans", pLanguageName))
-	{
-		ret = kLanguageChinese;
-	}
+    {
+        ret = kLanguageChinese;
+    }
 	else if (0 == strcmp("zh-Hant", pLanguageName))
 	{
 		ret = kLanguageChinese_tw;
@@ -100,6 +100,10 @@ ccLanguageType CCApplication::getCurrentLanguage()
     else if (0 == strcmp("es", pLanguageName))
     {
         ret = kLanguageSpanish;
+    }
+    else if (0 == strcmp("nl", pLanguageName))
+    {
+        ret = kLanguageDutch;
     }
     else if (0 == strcmp("ru", pLanguageName))
     {

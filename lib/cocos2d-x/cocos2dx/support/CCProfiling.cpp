@@ -28,7 +28,10 @@ using namespace std;
 
 NS_CC_BEGIN
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 //#pragma mark - Profiling Categories
+#endif
+
 /* set to NO the categories that you don't want to profile */
 bool kCCProfilerCategorySprite = false;
 bool kCCProfilerCategoryBatchSprite = false;
@@ -116,7 +119,7 @@ const char* CCProfilingTimer::description()
 {
     static char s_desciption[512] = {0};
     
-    sprintf(s_desciption, "%s ::\tavg1: %dµ,\tavg2: %dµ,\tmin: %dµ,\tmax: %dµ,\ttotal: %.2fs,\tnr calls: %d", m_NameStr.c_str(), m_dAverageTime1, (int)m_dAverageTime2, (int)minTime, (int)maxTime, totalTime / 1000000., numberOfCalls);
+    sprintf(s_desciption, "%s ::\tavg1: %dµ,\tavg2: %dµ,\tmin: %dµ,\tmax: %dµ,\ttotal: %.2fs,\tnr calls: %d", m_NameStr.c_str(), m_dAverageTime1, m_dAverageTime2, minTime, maxTime, totalTime/1000000., numberOfCalls);
     return s_desciption;
 }
 
@@ -156,7 +159,7 @@ void CCProfilingEndTimingBlock(const char *timerName)
 
     CCAssert(timer, "CCProfilingTimer  not found");
     
-    long duration = 1000000 * (now.tv_sec - timer->m_sStartTime.tv_sec) + (now.tv_usec - timer->m_sStartTime.tv_usec);
+    int duration = 1000000 * (now.tv_sec - timer->m_sStartTime.tv_sec) + (now.tv_usec - timer->m_sStartTime.tv_usec);
 
     timer->totalTime += duration;
     timer->m_dAverageTime1 = (timer->m_dAverageTime1 + duration) / 2.0f;

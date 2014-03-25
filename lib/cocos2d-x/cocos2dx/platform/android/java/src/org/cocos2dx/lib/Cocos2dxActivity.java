@@ -24,7 +24,6 @@ THE SOFTWARE.
 package org.cocos2dx.lib;
 
 import org.cocos2dx.lib.Cocos2dxHelper.Cocos2dxHelperListener;
-import org.cocos2dx.utils.*;
 
 import android.app.Activity;
 import android.content.Context;
@@ -65,10 +64,6 @@ public abstract class Cocos2dxActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		Log.d("Cocos2dxActivity", "Cocos2dxActivity ON CREATE");
 		sContext = this;
-		
-		PSNative.init(this);
-		PSNetwork.init(this);
-		
     	this.mHandler = new Cocos2dxHandler(this);
 
     	this.init();

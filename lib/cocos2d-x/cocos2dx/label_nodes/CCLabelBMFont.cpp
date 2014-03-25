@@ -201,9 +201,9 @@ std::set<unsigned int>* CCBMFontConfiguration::parseConfigFile(const char *contr
     std::string strLeft = contents->getCString();
     while (strLeft.length() > 0)
     {
-        size_t pos = strLeft.find('\n');
+        int pos = strLeft.find('\n');
 
-        if (pos != std::string::npos)
+        if (pos != (int)std::string::npos)
         {
             // the data is more than a line.get one line
             line = strLeft.substr(0, pos);
@@ -268,8 +268,8 @@ void CCBMFontConfiguration::parseImageFileName(std::string line, const char *fnt
     //////////////////////////////////////////////////////////////////////////
 
     // page ID. Sanity check
-    size_t index = line.find('=')+1;
-    size_t index2 = line.find(' ', index);
+    int index = line.find('=')+1;
+    int index2 = line.find(' ', index);
     std::string value = line.substr(index, index2-index);
     CCAssert(atoi(value.c_str()) == 0, "LabelBMFont file could not be found");
     // file 
@@ -289,8 +289,8 @@ void CCBMFontConfiguration::parseInfoArguments(std::string line)
     //////////////////////////////////////////////////////////////////////////
 
     // padding
-    size_t index = line.find("padding=");
-    size_t index2 = line.find(' ', index);
+    int index = line.find("padding=");
+    int index2 = line.find(' ', index);
     std::string value = line.substr(index, index2-index);
     sscanf(value.c_str(), "padding=%d,%d,%d,%d", &m_tPadding.top, &m_tPadding.right, &m_tPadding.bottom, &m_tPadding.left);
     CCLOG("cocos2d: padding: %d,%d,%d,%d", m_tPadding.left, m_tPadding.top, m_tPadding.right, m_tPadding.bottom);
@@ -304,8 +304,8 @@ void CCBMFontConfiguration::parseCommonArguments(std::string line)
     //////////////////////////////////////////////////////////////////////////
 
     // Height
-    size_t index = line.find("lineHeight=");
-    size_t index2 = line.find(' ', index);
+    int index = line.find("lineHeight=");
+    int index2 = line.find(' ', index);
     std::string value = line.substr(index, index2-index);
     sscanf(value.c_str(), "lineHeight=%d", &m_nCommonHeight);
     // scaleW. sanity check
@@ -335,8 +335,8 @@ void CCBMFontConfiguration::parseCharacterDefinition(std::string line, ccBMFontD
     //////////////////////////////////////////////////////////////////////////
 
     // Character ID
-    size_t index = line.find("id=");
-    size_t index2 = line.find(' ', index);
+    int index = line.find("id=");
+    int index2 = line.find(' ', index);
     std::string value = line.substr(index, index2-index);
     sscanf(value.c_str(), "id=%u", &characterDefinition->charID);
 
@@ -386,8 +386,8 @@ void CCBMFontConfiguration::parseKerningEntry(std::string line)
 
     // first
     int first;
-    size_t index = line.find("first=");
-    size_t index2 = line.find(' ', index);
+    int index = line.find("first=");
+    int index2 = line.find(' ', index);
     std::string value = line.substr(index, index2-index);
     sscanf(value.c_str(), "first=%d", &first);
 
@@ -501,7 +501,7 @@ bool CCLabelBMFont::initWithString(const char *theString, const char *fntFile, f
         theString = "";
     }
 
-    if (CCSpriteBatchNode::initWithTexture(texture, (unsigned int)strlen(theString)))
+    if (CCSpriteBatchNode::initWithTexture(texture, strlen(theString)))
     {
         m_fWidth = width;
         m_pAlignment = alignment;
@@ -581,6 +581,7 @@ void CCLabelBMFont::createFontChars()
     unsigned int stringLen = m_sString ? cc_wcslen(m_sString) : 0;
     if (stringLen == 0)
     {
+        this->setContentSize(CC_SIZE_PIXELS_TO_POINTS(tmpSize));
         return;
     }
 
@@ -799,7 +800,7 @@ void CCLabelBMFont::updateLabel()
     {
         // Step 1: Make multiline
         vector<unsigned short> str_whole = cc_utf16_vec_from_utf16_str(m_sString);
-        unsigned int stringLength = (unsigned int)str_whole.size();
+        unsigned int stringLength = str_whole.size();
         vector<unsigned short> multiline_string;
         multiline_string.reserve( stringLength );
         vector<unsigned short> last_word;
@@ -950,10 +951,10 @@ void CCLabelBMFont::updateLabel()
 
         multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
 
-        size_t size = multiline_string.size();
+        int size = multiline_string.size();
         unsigned short* str_new = new unsigned short[size + 1];
 
-        for (size_t i = 0; i < size; ++i)
+        for (int i = 0; i < size; ++i)
         {
             str_new[i] = multiline_string[i];
         }
@@ -978,7 +979,7 @@ void CCLabelBMFont::updateLabel()
             if (m_sString[ctr] == '\n' || m_sString[ctr] == 0)
             {
                 float lineWidth = 0.0f;
-                unsigned int line_length = (unsigned int)last_line.size();
+                unsigned int line_length = last_line.size();
 				// if last line is empty we must just increase lineNumber and work with next line
                 if (line_length == 0)
                 {

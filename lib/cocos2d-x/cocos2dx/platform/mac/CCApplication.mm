@@ -95,7 +95,7 @@ ccLanguageType CCApplication::getCurrentLanguage()
         if ([scriptCode isEqualToString:@"Hant"])
             ret = kLanguageChinese_tw;
         else
-            ret = kLanguageChinese;
+        ret = kLanguageChinese;
     }
     else if ([languageCode isEqualToString:@"en"])
     {
@@ -112,6 +112,9 @@ ccLanguageType CCApplication::getCurrentLanguage()
     }
     else if ([languageCode isEqualToString:@"es"]){
         ret = kLanguageSpanish;
+    }
+    else if ([languageCode isEqualToString:@"nl"]){
+        ret = kLanguageDutch;
     }
     else if ([languageCode isEqualToString:@"ru"]){
         ret = kLanguageRussian;

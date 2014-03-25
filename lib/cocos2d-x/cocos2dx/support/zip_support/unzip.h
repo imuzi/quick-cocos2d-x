@@ -403,7 +403,7 @@ int CC_DLL unzCloseCurrentFile OF((unzFile file));
 
 int CC_DLL unzReadCurrentFile OF((unzFile file,
                       voidp buf,
-                      uLong len));
+                      unsigned len));
 /*
   Read bytes from the current file (opened by unzOpenCurrentFile)
   buf contain buffer where data must be copied

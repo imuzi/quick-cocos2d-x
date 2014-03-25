@@ -222,9 +222,9 @@ static bool _initPremultipliedATextureWithImage(CGImageRef image, NSUInteger POT
     // should be after calling super init
     pImageInfo->isPremultipliedAlpha = true;
     pImageInfo->hasAlpha = true;
-    pImageInfo->bitsPerComponent = (int)bpp;
-    pImageInfo->width = (unsigned int)POTWide;
-    pImageInfo->height = (unsigned int)POTHigh;
+    pImageInfo->bitsPerComponent = bpp;
+    pImageInfo->width = POTWide;
+    pImageInfo->height = POTHigh;
     
     if (pImageInfo->data)
     {
@@ -478,8 +478,8 @@ static bool _initWithString(const char * pText, cocos2d::CCImage::ETextAlign eAl
 		if (dataNew) {
 			memcpy(dataNew, data, textureSize);
 			// output params
-			pInfo->width = (unsigned int)POTWide;
-			pInfo->height = (unsigned int)POTHigh;
+			pInfo->width = POTWide;
+			pInfo->height = POTHigh;
 			pInfo->data = dataNew;
 			pInfo->hasAlpha = true;
 			pInfo->isPremultipliedAlpha = true;
@@ -583,7 +583,7 @@ bool CCImage::initWithImageFile(const char * strPath, EImageFormat eImgFmt/* = e
 		{
 			if (strTemp.rfind("@2x") == std::string::npos)
 			{
-				size_t t = strTemp.rfind(".");
+				int t = strTemp.rfind(".");
 				if (t != std::string::npos)
 				{
 					strTemp.insert(t, "@2x");
@@ -612,7 +612,7 @@ bool CCImage::initWithImageFile(const char * strPath, EImageFormat eImgFmt/* = e
 
 	unsigned long fileSize = 0;
 	unsigned char* pFileData = CCFileUtils::sharedFileUtils()->getFileData(strTemp.c_str(), "rb", &fileSize);
-	bool ret = initWithImageData(pFileData, (int)fileSize, eImgFmt);
+	bool ret = initWithImageData(pFileData, fileSize, eImgFmt);
 	delete []pFileData;
 	return ret;
 }
@@ -627,7 +627,7 @@ bool CCImage::initWithImageFileThreadSafe(const char *fullpath, EImageFormat ima
     unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(fullpath, "rb", &nSize);
     if (pBuffer != NULL && nSize > 0)
     {
-        bRet = initWithImageData(pBuffer, (int)nSize, imageType);
+        bRet = initWithImageData(pBuffer, nSize, imageType);
     }
     CC_SAFE_DELETE_ARRAY(pBuffer);
     return bRet;
