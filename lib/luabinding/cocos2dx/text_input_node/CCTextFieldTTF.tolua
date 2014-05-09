@@ -67,6 +67,15 @@ class CCTextFieldTTF : public CCLabelTTF
 
     void setSecureTextEntry(bool value);
     bool isSecureTextEntry();
+
+    ///add by lxc
+    void registerScriptTextFieldHandler(LUA_FUNCTION handler);
+    void unregisterScriptTextFieldHandler(void);
+   
+    void setMaxLength(int len);
+    int getCHLenOfChar(const char* src, int chLen); 
+    ///end
+
 };
 
 // end of input group

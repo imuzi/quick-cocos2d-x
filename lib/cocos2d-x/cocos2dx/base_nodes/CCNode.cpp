@@ -1765,4 +1765,43 @@ void CCNode::ccTouchesCancelled(CCSet *pTouches, CCEvent *pEvent)
     CC_UNUSED_PARAM(pEvent);
 }
 
+//add by wls
+void CCNode::enableGrayAllChildren()
+{
+    if ( m_pChildren && m_pChildren->count() > 0 )
+    {
+        CCObject* child;
+        CCARRAY_FOREACH(m_pChildren, child)
+        {
+            CCNode* pNode = (CCNode*) child;
+            if (pNode)
+            {
+                pNode->enableGrayAllChildren();
+            }
+            pNode->enableGray();
+        }
+    }
+    enableGray();
+}
+
+void CCNode::disableGrayAllChildren()
+{
+    if ( m_pChildren && m_pChildren->count() > 0 )
+    {
+        CCObject* child;
+        CCARRAY_FOREACH(m_pChildren, child)
+        {
+            CCNode* pNode = (CCNode*) child;
+            if (pNode)
+            {
+                pNode->enableGrayAllChildren();
+            }
+            pNode->disableGray();
+        }
+    }
+    disableGray();
+}
+
+//add end
+
 NS_CC_END

@@ -33,6 +33,10 @@ NS_CC_EXT_BEGIN
 #define INSET_RATIO          0.2f
 #define MOVE_INCH            7.0f/160.0f
 
+//add by lxc 超过边界后减速移动到的最大位置 相对比container的宽度
+#define OUTOFBORDER_MOVERATIO 0.35
+//add end
+
 static float convertDistanceFromPointToInch(float pointDis)
 {
     float factor = ( CCEGLView::sharedOpenGLView()->getScaleX() + CCEGLView::sharedOpenGLView()->getScaleY() ) / 2;
@@ -691,20 +695,55 @@ int CCScrollView::ccTouchMoved(CCTouch* touch, CCEvent* event)
 
             if (frame.containsPoint(this->convertToWorldSpace(newPoint)))
             {
+                //add by lxc
+                float moveDis ;
+                //end
                 switch (m_eDirection)
                 {
                     case kCCScrollViewDirectionVertical:
                         moveDistance = ccp(0.0f, moveDistance.y);
+                        //add by lxc
+                        moveDis = moveDistance.y;
+                        //end
                         break;
                     case kCCScrollViewDirectionHorizontal:
                         moveDistance = ccp(moveDistance.x, 0.0f);
+                        //add by lxc
+                        moveDis = moveDistance.x;
+                        //end
                         break;
                     default:
                         break;
                 }
+                
 
                 maxInset = m_fMaxInset;
                 minInset = m_fMinInset;
+                
+                //// add by lxc 超过边界减速滑动
+                if (m_bBounceable)
+                {
+                    maxInset = m_fMaxInset;
+                    minInset = m_fMinInset;
+                }
+                else
+                {
+                    maxInset = this->maxContainerOffset();
+                    minInset = this->minContainerOffset();
+                }
+                
+                newX = m_pContainer->getPosition().x;
+                newY = m_pContainer->getPosition().y;
+                
+                if (newY > maxInset.y || newY < minInset.y ||
+                    newX > maxInset.x || newX < minInset.x ||
+                    newX == maxInset.x || newX == minInset.x ||
+                    newY == maxInset.y || newY == minInset.y) {
+                    
+                    moveDistance = ccpMult(moveDistance, OUTOFBORDER_MOVERATIO-fabsf(moveDis)/m_pContainer->getContentSize().width);
+                    
+                }
+                ///////add end
 
                 newX     = m_pContainer->getPosition().x + moveDistance.x;
                 newY     = m_pContainer->getPosition().y + moveDistance.y;

@@ -24,7 +24,10 @@ extern "C" {
 
 // lsqlite3
 #include "lsqlite3/lsqlite3.h"
-
+//add by lxc
+// llthreads
+#include "llthreads/pre_generated-llthreads.nobj.c"
+    
 static luaL_Reg luax_exts[] = {
     {"cjson", luaopen_cjson_safe},
     {"zlib", luaopen_zlib},
@@ -33,6 +36,8 @@ static luaL_Reg luax_exts[] = {
     {"mime.core", luaopen_mime_core},
     {"lfs", luaopen_lfs},
     {"lsqlite3", luaopen_lsqlite3},
+    //add by lxc
+    {"llthreads", luaopen_llthreads},
     {NULL, NULL}
 };
 

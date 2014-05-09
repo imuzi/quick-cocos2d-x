@@ -1529,6 +1529,12 @@ public:
     virtual void ccTouchesCancelled(CCSet *pTouches, CCEvent *pEvent);
 
     /// @}
+    ///add by wls
+    virtual void disableGray(){};
+    virtual void enableGray(){};
+    void enableGrayAllChildren();
+    void disableGrayAllChildren();
+    ///add end
 
 private:
     /// lazy allocs

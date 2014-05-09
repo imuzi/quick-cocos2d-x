@@ -502,6 +502,11 @@ public:
     
     /// @} End of Sprite properties getter/setters
     
+    //add by wls
+    void enableGray();
+    void disableGray();
+    //add end
+    
 protected:
     void updateColor(void);
     virtual void setTextureCoords(CCRect rect);

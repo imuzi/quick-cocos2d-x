@@ -117,6 +117,10 @@ public:
     }
 
     // attribute
+    
+    //add by lxc
+    float usedMemory();
+    //end
 
     /** Get current running Scene. Director can only run one Scene at the time */
     inline CCScene* getRunningScene(void) { return m_pRunningScene; }

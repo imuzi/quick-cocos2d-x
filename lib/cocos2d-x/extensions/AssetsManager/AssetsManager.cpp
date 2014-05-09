@@ -114,7 +114,51 @@ static size_t getVersionCode(void *ptr, size_t size, size_t nmemb, void *userdat
     
     return (size * nmemb);
 }
-
+//edit by lxc
+//bool AssetsManager::checkUpdate()
+//{
+//    if (_versionFileUrl.size() == 0) return false;
+//    
+//    _curl = curl_easy_init();
+//    if (! _curl)
+//    {
+//        CCLOG("can not init curl");
+//        return false;
+//    }
+//    
+//    // Clear _version before assign new value.
+//    _version.clear();
+//    
+//    CURLcode res;
+//    curl_easy_setopt(_curl, CURLOPT_URL, _versionFileUrl.c_str());
+//    curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, 0L);
+//    curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, getVersionCode);
+//    curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_version);
+//    if (_connectionTimeout) curl_easy_setopt(_curl, CURLOPT_CONNECTTIMEOUT, _connectionTimeout);
+//    res = curl_easy_perform(_curl);
+//    
+//    if (res != 0)
+//    {
+//        sendErrorMessage(kNetwork);
+//        CCLOG("can not get version file content, error code is %d", res);
+//        curl_easy_cleanup(_curl);
+//        return false;
+//    }
+//    
+//    string recordedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_VERSION);
+//    if (recordedVersion == _version)
+//    {
+//        sendErrorMessage(kNoNewVersion);
+//        CCLOG("there is not new version");
+//        // Set resource search path.
+//        setSearchPath();
+//        return false;
+//    }
+//    
+//    CCLOG("there is a new version: %s", _version.c_str());
+//    
+//    return true;
+//}
 bool AssetsManager::checkUpdate()
 {
     if (_versionFileUrl.size() == 0) return false;
@@ -146,19 +190,32 @@ bool AssetsManager::checkUpdate()
     }
     
     string recordedVersion = CCUserDefault::sharedUserDefault()->getStringForKey(KEY_OF_VERSION);
-    if (recordedVersion == _version)
+    
+    printf("recordedVersion = %s",recordedVersion.c_str());
+    printf("new_version.c_str() = %s",_version.c_str());
+    
+    if (atof(recordedVersion.c_str()) >=atof(_version.c_str()))
     {
         sendErrorMessage(kNoNewVersion);
-        CCLOG("there is not new version");
+        CCLog("there is not new version");
         // Set resource search path.
+        printf("%f",atof(recordedVersion.c_str()));
+        printf("%f",atof(_version.c_str()));
+        
+//        CCNotificationCenter::sharedNotificationCenter()->postNotification("checkversion",(CCObject*)false);
+        
+        
         setSearchPath();
         return false;
     }
     
-    CCLOG("there is a new version: %s", _version.c_str());
-    
+    printf("there is a new version: %s", _version.c_str());
+//    CCNotificationCenter::sharedNotificationCenter()->postNotification("checkversion",(CCObject*)true);
     return true;
 }
+
+
+//end
 
 void* assetsManagerDownloadAndUncompress(void *data)
 {

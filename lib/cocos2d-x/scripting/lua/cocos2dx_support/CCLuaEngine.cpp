@@ -486,4 +486,18 @@ int CCLuaEngine::executeEventWithArgs(int nHandler, CCArray* pArgs)
     return  m_stack->executeFunctionByHandler(nHandler, nArgNums);
 }
 
+//add by wls
+int CCLuaEngine::executeMyTouchEvent(int nHandler,const char* pEventName,CCTouch *pTouches)
+{
+    m_stack->pushString(pEventName);
+    const CCPoint pt = CCDirector::sharedDirector()->convertToGL(pTouches->getLocationInView());
+    m_stack->pushFloat(pt.x);
+    m_stack->pushFloat(pt.y);
+    int ret = m_stack->executeFunctionByHandler(nHandler, 3);
+    m_stack->clean();
+    return ret;
+    
+}
+//add end
+
 NS_CC_END

@@ -245,6 +245,10 @@ public:
      * @return true if the assert was handled by the script engine, false otherwise.
      */
     virtual bool handleAssert(const char *msg) = 0;
+    
+    //add by wls
+    virtual int executeMyTouchEvent(int nHandler,const char* pEventName,CCTouch *pTouches) = 0;
+    //add end
 };
 
 /**

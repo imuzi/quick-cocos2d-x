@@ -133,6 +133,10 @@ class CCNode : public CCEventDispatcher
      */
     int getZOrder();
 
+    ///add by wls
+    void enableGrayAllChildren();
+    void disableGrayAllChildren();
+    ///add end
 
     /**
      * Sets the real OpenGL Z vertex.

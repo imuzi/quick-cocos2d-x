@@ -162,6 +162,11 @@ public:
     const char* getFontName();
     void setFontName(const char *fontName);
     
+    //add by wls
+    void enableGray(){};
+    void disableGray(){};
+    //add end
+    
 private:
     bool updateTexture();
 protected:

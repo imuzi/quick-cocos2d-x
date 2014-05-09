@@ -96,6 +96,12 @@ toluafix_pushusertype_ccobject(tolua_S, nID, pLuaID, (void*)tolua_ret
 EOT;
     $rules[$find] = $replace;
 
+    //add by lxc
+    $find = 'toluafix_pushusertype_ccobject(tolua_S,(void*)self';
+    $replace = 'tolua_pushusertype(tolua_S,(void*)self';
+    $rules[$find] = $replace;
+    //add end
+
     // fix LUA_STRING
     $find = '((LUA_STRING*)';
     $replace = '(';

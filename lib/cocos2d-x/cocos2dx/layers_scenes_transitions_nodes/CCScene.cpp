@@ -110,7 +110,7 @@ int CCScene::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent)
 {
     // remove all touch targets
     m_touchTargets->removeAllObjects();
-
+    
     // check touch targets
     const CCPoint p = pTouch->getLocation();
     CCObject *node;
@@ -142,7 +142,7 @@ int CCScene::ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent)
                 if (ret == kCCTouchBegan)
                 {
                     touchNode->release();
-                    break;
+                    return kCCTouchBegan;//break;
                 }
             }
             touchNode->release();

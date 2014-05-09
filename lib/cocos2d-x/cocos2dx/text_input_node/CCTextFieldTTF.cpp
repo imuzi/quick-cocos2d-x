@@ -56,6 +56,8 @@ CCTextFieldTTF::CCTextFieldTTF()
 , m_pInputText(new std::string)
 , m_pPlaceHolder(new std::string)   // prevent CCLabelTTF initWithString assertion
 , m_bSecureTextEntry(false)
+, m_nScriptTextFieldHandler(0)  //add by wls
+, strMaxLen(0)   //add by wls
 {
     m_ColorSpaceHolder.r = m_ColorSpaceHolder.g = m_ColorSpaceHolder.b = 127;
 }
@@ -64,6 +66,9 @@ CCTextFieldTTF::~CCTextFieldTTF()
 {
     CC_SAFE_DELETE(m_pInputText);
     CC_SAFE_DELETE(m_pPlaceHolder);
+    //add by wls
+    unregisterScriptTextFieldHandler();
+    //add end
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,6 +188,27 @@ void CCTextFieldTTF::insertText(const char * text, int len)
 
     if (len > 0)
     {
+        //add by wls
+        if (0 != m_nScriptTextFieldHandler && 0 != strMaxLen)
+        {
+            if (m_nCharCount == strMaxLen) {
+                cocos2d::CCScriptEngineProtocol* pEngine = cocos2d::CCScriptEngineManager::sharedManager()->getScriptEngine();
+                pEngine->executeEvent(m_nScriptTextFieldHandler, "lengthLimit",this);
+                return;
+            }
+            else if (_calcCharCount(sInsert.c_str()) + m_nCharCount > strMaxLen)
+            {
+                int leftChar = strMaxLen - m_nCharCount;
+                int realLen = getCHLenOfChar(sInsert.c_str(),leftChar);
+                std::string tempStr(sInsert.c_str(), len);
+                sInsert.resize(realLen,0);
+                
+                cocos2d::CCScriptEngineProtocol* pEngine = cocos2d::CCScriptEngineManager::sharedManager()->getScriptEngine();
+                pEngine->executeEvent(m_nScriptTextFieldHandler, "lengthLimit",this);
+            }
+        }
+        //add end
+        
         if (m_pDelegate && m_pDelegate->onTextFieldInsertText(this, sInsert.c_str(), len))
         {
             // delegate doesn't want to insert text
@@ -361,5 +387,56 @@ bool CCTextFieldTTF::isSecureTextEntry()
 {
     return m_bSecureTextEntry;
 }
+
+//add by wls
+void CCTextFieldTTF::keyboardWillHide(CCIMEKeyboardNotificationInfo& info){
+    if (0 != m_nScriptTextFieldHandler)
+    {
+        cocos2d::CCScriptEngineProtocol* pEngine = cocos2d::CCScriptEngineManager::sharedManager()->getScriptEngine();
+        pEngine->executeEvent(m_nScriptTextFieldHandler, "willHide",this);
+    }
+}
+
+void CCTextFieldTTF::registerScriptTextFieldHandler(int handler)
+{
+    unregisterScriptTextFieldHandler();
+    m_nScriptTextFieldHandler = handler;
+}
+
+void CCTextFieldTTF::unregisterScriptTextFieldHandler(void)
+{
+    if (0 != m_nScriptTextFieldHandler)
+    {
+        CCScriptEngineManager::sharedManager()->getScriptEngine()->removeScriptHandler(m_nScriptTextFieldHandler);
+        m_nScriptTextFieldHandler = 0;
+    }
+}
+
+void CCTextFieldTTF::setMaxLength(int len)
+{
+    strMaxLen = len;
+}
+
+int CCTextFieldTTF::getCHLenOfChar(const char* src, int chLen)
+{
+    int len=0;
+    int n = 0;
+    char ch = 0;
+    while ((ch = *src))
+    {
+        CC_BREAK_IF(! ch);
+        CC_BREAK_IF( n == chLen+1);
+        
+        
+        if (0x80 != (0xC0 & ch))
+        {
+            ++n;
+        }
+        ++src;
+        len++;
+    }
+    return len-1;
+}
+//add end
 
 NS_CC_END

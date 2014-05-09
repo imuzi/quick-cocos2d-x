@@ -85,6 +85,11 @@ class CCSprite : public CCNode
      */
     static CCSprite* create();
 
+    ///add by wls  
+    void enableGray();
+    void disableGray();
+    ///add end
+
     /**
      * Creates a sprite with a texture and a rect.
      *

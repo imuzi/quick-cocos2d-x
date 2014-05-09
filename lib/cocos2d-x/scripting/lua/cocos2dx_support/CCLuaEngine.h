@@ -131,6 +131,10 @@ public:
 
     virtual bool handleAssert(const char *msg);
     
+    //add by wls
+    virtual int executeMyTouchEvent(int nHandler,const char* pEventName,CCTouch *pTouches);
+    //add end
+    
 private:
     CCLuaEngine(void)
     : m_stack(NULL)

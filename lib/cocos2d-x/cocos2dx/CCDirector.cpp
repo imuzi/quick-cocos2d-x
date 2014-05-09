@@ -89,6 +89,40 @@ static CCDisplayLinkDirector *s_SharedDirector = NULL;
 #define kDefaultFPS        60  // 60 frames per second
 extern const char* cocos2dVersion(void);
 
+//add by lxc
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#include <sys/sysctl.h>
+#include <mach/mach.h>
+#endif
+float CCDirector::usedMemory()
+{
+  #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    task_basic_info_data_t taskInfo;
+    
+    mach_msg_type_number_t infoCount = TASK_BASIC_INFO_COUNT;
+    
+    kern_return_t kernReturn = task_info(mach_task_self(),
+                                         
+                                         TASK_BASIC_INFO,
+                                         
+                                         (task_info_t)&taskInfo,
+                                         
+                                         &infoCount);
+    
+    
+    if (kernReturn != KERN_SUCCESS) {
+        
+        return 0;
+        
+    }
+    
+    return taskInfo.resident_size / 1024.0 / 1024.0;
+    #endif
+    return 0;
+}
+//end 
+
+
 CCDirector* CCDirector::sharedDirector(void)
 {
     if (!s_SharedDirector)
@@ -830,7 +864,7 @@ void CCDirector::showStats(void)
         {
             if (m_fAccumDt > CC_DIRECTOR_STATS_INTERVAL)
             {
-                sprintf(m_pszFPS, "%.3f", m_fSecondsPerFrame);
+                sprintf(m_pszFPS, "%.3f", usedMemory());//m_fSecondsPerFrame); //changed by lxc
                 m_pSPFLabel->setString(m_pszFPS);
                 
                 m_fFrameRate = m_uFrames / m_fAccumDt;
@@ -841,7 +875,7 @@ void CCDirector::showStats(void)
                 m_pFPSLabel->setString(m_pszFPS);
                 
                 sprintf(m_pszFPS, "%4lu", (unsigned long)g_uNumberOfDraws);
-                m_pDrawsLabel->setString(m_pszFPS);
+                m_pDrawsLabel->setString("");//m_pszFPS); //changed by lxc
             }
             
             m_pDrawsLabel->visit();

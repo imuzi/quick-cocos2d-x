@@ -3,6 +3,43 @@ $#include "crypto/CCCrypto.h"
 $#include "native/CCNative.h"
 $#include "network/CCNetwork.h"
 
+$#include "myclass/CData.h"
+$#include "myclass/MySprite.h"
+$#include "myclass/DialogLayer.h"
+$#include "myclass/MyLayer.h"
+$#include "myclass/FDPixelSprite.h"
+$#include "myclass/TableViewTestScene.h"
+$#include "myclass/NetManager.h"
+$#include "myclass/MsgManager.h"
+$#include "myclass/SliderLayer.h"
+$#include "myclass/MySocket.h"
+$#include "myclass/EXZoomController.h"
+$#include "myclass/CCLayerPanZoom.h"
+$#include "myclass/RandomOwn.h"
+
+
+$#include "spine/CCSkeletonAnimation.h"
+$#include "spine/CCSkeleton.h"
+
+
+
+$#include "spine/Animation.h"
+$#include "spine/AnimationState.h"
+$#include "spine/AnimationStateData.h"
+$#include "spine/Atlas.h"
+$#include "spine/AtlasAttachmentLoader.h"
+$#include "spine/Attachment.h"
+$#include "spine/AttachmentLoader.h"
+$#include "spine/Bone.h"
+$#include "spine/BoneData.h"
+$#include "spine/RegionAttachment.h"
+$#include "spine/Skeleton.h"
+$#include "spine/SkeletonData.h"
+$#include "spine/SkeletonJson.h"
+$#include "spine/Skin.h"
+$#include "spine/Slot.h"
+$#include "spine/SlotData.h"
+
 $using namespace std;
 $using namespace cocos2d;
 $using namespace cocos2d::extra;
@@ -125,3 +162,351 @@ class CCNetwork
                                                const char* url,
                                                int method = kCCHTTPRequestMethodGET);
 };
+
+class MySocket {
+    
+    static MySocket* getInstance();
+    bool init(const char* ip,unsigned short port);
+    void StartRequest(int cbMsgId);
+    void closePThread();
+    void destroy();
+    
+};
+
+
+
+class CData {
+    std::string dir;
+    static CData* getAmInstance();
+    void enterLua();
+    
+};
+
+class MySprite : public CCSprite{
+    static MySprite* createMS(const char* fileName);
+};
+
+class DialogLayer : public CCLayerColor
+{ 
+    CCMenu * m_pMenu ;
+    CCMenu * m_pMenu2 ;
+    CCLayer * m_pLayer ;
+    CCEditBox * m_pEditBox1 ;
+    CCEditBox * m_pEditBox2 ;
+    CCEditBox * m_pEditBox3 ;
+    CCEditBox * m_pEditBox4 ;
+    CCEditBox * m_pEditBox5 ;
+    CursorTextField * m_pTextField;
+    LuaTableView* m_tableview;
+    LuaTableView* m_tableview1;
+    
+    void disableTouch();
+    void eanbleTouch();
+    void registerScriptTouchHandler(LUA_FUNCTION handler);
+    void unRegisterScriptTouchHandler();
+  
+    void enableTouch(CCNode* child);
+    
+    static DialogLayer* create();
+    static DialogLayer* create(const ccColor4B& color);
+    static DialogLayer* create(int priorityRate);
+    
+};
+
+class MyLayer : public CCLayer
+{
+    static MyLayer *create(void);
+    float getHeight();
+};
+
+class FDPixelSprite : public CCSprite, public CCTargetedTouchDelegate {
+    static FDPixelSprite* create( const char *pszFileName );
+};
+
+class TableViewTestLayer : public CCLayer, public MyTViewDataSource, public MyTViewDelegate
+{
+    static TableViewTestLayer* create();
+    void StarSpin(int linenum);
+};
+
+class NetManager
+{
+    static NetManager* getInstance();
+    bool ContectLong(const char* ip, unsigned short port);
+    
+//    bool SendAndRecvData();
+//    
+//    bool SendAndRecvnLoginData(int msgid,char* name,int code,int recnum);
+    
+    bool RecvData();
+    
+    int SendData();
+    
+};
+
+class MsgManager {
+
+    static MsgManager* getInstance();
+    int msgnum;
+    unsigned char recvbuffer[4049];
+    unsigned char sendbuffer[4049];
+    
+    void cleanBuffer();
+//    int mesgid;
+//    int wbufferpos;
+//    int rbufferpos;
+    
+    int setHeadMsgId(int msgid);
+    int setHeadMsgKind(int msgkind);
+    
+    int writeBodyShort(short value);
+    int writeBodyByte(unsigned char value);
+    int writeBodyInt(int value);
+    int writeBodyString(char* value);
+    
+    unsigned char*  getsendMsg();
+    
+    
+    int writeBodyLong(long long value);
+    long long readBodyLong();
+    
+    int getMsgId();
+    int getBodyLen();
+    bool getResult();
+    short readBodyShort();
+    unsigned char readBodyByte();
+    int readBodyInt();
+    std::string readBodyString();
+};
+
+
+class SliderLayer : public CCLayer
+{
+public:
+       static SliderLayer *create(void);
+};
+
+class CCSkeletonAnimation: public CCSkeleton {
+public:
+  spAnimationState* state;
+    
+    //add by wls
+    static SpineSkin* createSpineSkin(int num);
+    static void releaseSpineSkin(SpineSkin* skin);
+    static void addSpineSkin(SpineSkin* skin,int pos,const char* slotName,const char* skinName);
+    static CCSkeletonAnimation* createWithFile (const char* skeletonDataFile, const char* atlasFile, SpineSkin* skin, int num,float scale);
+    CCSkeletonAnimation (const char* skeletonDataFile, const char* atlasFile, SpineSkin* skin, int num, float scale);
+    int m_nScriptAnimationHandler;
+    char listenAnimName[20];
+    void registerAnimationStatusListener(LUA_FUNCTION handler,const char* animName);
+    void unRegisterAnimationStatusListener();
+    float getAnimationDuration(const char* animName);
+    //add end
+
+  static CCSkeletonAnimation* createWithData (spSkeletonData* skeletonData);
+  static CCSkeletonAnimation* createWithFile (const char* skeletonDataFile, spAtlas* atlas, float scale = 0);
+  static CCSkeletonAnimation* createWithFile (const char* skeletonDataFile, const char* atlasFile, float scale = 0);
+
+  CCSkeletonAnimation (spSkeletonData* skeletonData);
+  CCSkeletonAnimation (const char* skeletonDataFile, spAtlas* atlas, float scale = 0);
+  CCSkeletonAnimation (const char* skeletonDataFile, const char* atlasFile, float scale = 0);
+
+  virtual ~CCSkeletonAnimation ();
+
+  virtual void update (float deltaTime);
+
+  void setAnimationStateData (spAnimationStateData* stateData);
+  void setMix (const char* fromAnimation, const char* toAnimation, float duration);
+
+  void setAnimationListener (CCObject* instance, SEL_AnimationStateEvent method);
+  spTrackEntry* setAnimation (int trackIndex, const char* name, bool loop);
+  spTrackEntry* addAnimation (int trackIndex, const char* name, bool loop, float delay = 0);
+  spTrackEntry* getCurrent (int trackIndex = 0);
+  void clearTracks ();
+  void clearTrack (int trackIndex = 0);
+
+  virtual void onAnimationStateEvent (int trackIndex, spEventType type, spEvent* event, int loopCount);
+
+
+
+};
+class CCSkeleton: public CCNode, public CCBlendProtocol {
+public:
+  spSkeleton* skeleton;
+  spBone* rootBone;
+  float timeScale;
+  bool debugSlots;
+  bool debugBones;
+  bool premultipliedAlpha;
+    
+    //add by wls
+    CCSkeleton (const char* skeletonDataFile, const char* atlasFile, SpineSkin* equips ,int changeNum ,float scale = 1);
+    ccColor3B myColor;
+    bool isAdditive;
+    void setColorAndAdditive(const ccColor3B& color);
+    void restoreColorAndAdditive();
+    //add end
+    
+    //addby lxc
+    float getAttachmentHeight(const char* attachmentName);
+
+  static CCSkeleton* createWithData (spSkeletonData* skeletonData, bool ownsSkeletonData = false);
+  static CCSkeleton* createWithFile (const char* skeletonDataFile, spAtlas* atlas, float scale = 0);
+  static CCSkeleton* createWithFile (const char* skeletonDataFile, const char* atlasFile, float scale = 0);
+
+  CCSkeleton (spSkeletonData* skeletonData, bool ownsSkeletonData = false);
+  CCSkeleton (const char* skeletonDataFile, spAtlas* atlas, float scale = 0);
+  CCSkeleton (const char* skeletonDataFile, const char* atlasFile, float scale = 0);
+
+  virtual ~CCSkeleton ();
+
+  virtual void update (float deltaTime);
+  virtual void draw ();
+  virtual cocos2d::CCRect boundingBox ();
+
+  // --- Convenience methods for common Skeleton_* functions.
+  void updateWorldTransform ();
+
+  void setToSetupPose ();
+  void setBonesToSetupPose ();
+  void setSlotsToSetupPose ();
+
+  /* Returns 0 if the bone was not found. */
+  spBone* findBone (const char* boneName) const;
+  /* Returns 0 if the slot was not found. */
+  spSlot* findSlot (const char* slotName) const;
+  
+  /* Sets the skin used to look up attachments not found in the SkeletonData defaultSkin. Attachments from the new skin are
+   * attached if the corresponding attachment from the old skin was attached. Returns false if the skin was not found.
+   * @param skin May be 0.*/
+  bool setSkin (const char* skinName);
+  
+  /* Returns 0 if the slot or attachment was not found. */
+  spAttachment* getAttachment (const char* slotName, const char* attachmentName) const;
+  /* Returns false if the slot or attachment was not found. */
+  bool setAttachment (const char* slotName, const char* attachmentName);
+
+  
+};
+
+
+class EXZoomController : public CCLayer {
+public:
+    EXZoomController();
+    ~EXZoomController();
+    
+    /*! Create a new control with the node you want to scroll/zoom */
+    static EXZoomController* controllerWithNode(CCNode* node);
+    
+    /*! Initialize a new control with the node you want to scroll/zoom */
+    bool initWithNode(CCNode* node);
+   
+    
+public:
+    bool      centerOnPinch;  /*!< Should zoom center on pinch pts, default is YES */
+    bool      zoomOnDoubleTap;/*!< Should we zoom in/out on double-tap */
+    float     zoomRate;       /*!< How much to zoom based on movement of pinch */
+    float     zoomInLimit;    /*!< The smallest zoom level */
+    float     zoomOutLimit;   /*!< The hightest zoom level */
+    float     swipeVelocityMultiplier; /*!< The velocity factor of the swipe's scroll action */
+    float     scrollDuration; /*!< Duration of the scroll action after a swipe */
+    float     scrollDamping;  /*!< When scrolling around, this will dampen the movement */
+    float     pinchDamping;   /*!< When zooming, this will dampen the zoom */
+    float     pinchDistanceThreshold; /*!< The distance moved before a pinch is recognized */
+    float     doubleTapZoomDuration;  /*!< Duration of zoom after double-tap */
+    int multitouchnum;
+//    bool disableTouch;
+public:
+    /*!< The max bounds you want to scroll */
+    void setBoundingRect(CCRect rect);
+    CCRect getBoundingRect();
+    
+    /*!< The boundary of your window, by default uses winSize of CCDirector */
+    void setWindowRect(CCRect rect);
+    CCRect getWindowRect();
+    
+    /*!< Get the optimal zoomOutLimit for the current state */
+    float getOptimalZoomOutLimit();
+    
+public:
+    /*! Scroll to position */
+    void updatePosition(CCPoint pos);
+    
+    /*! Center point in window view */
+    void centerOnPoint(CCPoint pt);
+    
+    /*! Center point in window view with a given duration */
+    void centerOnPoint(CCPoint pt, float duration, float rate);
+    
+    /*! Zoom in on point with duration */
+    void zoomInOnPoint(CCPoint pt, float duration);
+    
+    /*! Zoom out on point with duration */
+    void zoomOutOnPoint(CCPoint pt, float duration);
+    
+    /*! Zoom to a scale on a point with a given duration */
+    void zoomOnPoint(CCPoint pt, float duration, float scale);
+    
+    /*! Enable touches, convenience method really */
+    void enableWithTouchPriority(int priority, bool swallowsTouches);
+    
+    /*! Disable touches */
+    void disable();
+};
+
+class CCLayerPanZoom : public CCNode
+{
+public:
+       // there's no 'id' in cpp, so we recommend to return the exactly class pointer
+    static CCLayerPanZoom* layer();
+    virtual ~CCLayerPanZoom();
+    bool isPanLayerMoved();
+    
+//    CREATE_FUNC(CCLayerPanZoom);
+    virtual bool init();
+     
+    
+    virtual void update(float dt);
+    
+    void onEnter();
+    void onExit();
+    
+    void enablePanZoom();
+    void disablePanZoom();
+    
+    void setMaxScale(float maxScale);
+    float getMaxScale();
+    void setMinScale(float minScale);
+    float getMinScale();
+    
+    void setPanBoundsRect(const CCRect& rect);
+    CCRect getPanBoundRect();
+    
+    void setScale(float scale);
+    void setPosition(const CCPoint& position);
+    
+    /**
+     * Changes the scale factor on X axis of this node
+     * The deafult value is 1.0 if you haven't changed it before
+     * @param fScaleX   The scale factor on X axis.
+     */
+    virtual void setScaleX(float fScaleX);
+    /**
+     * Changes the scale factor on Y axis of this node
+     * The Default value is 1.0 if you haven't changed it before.
+     * @param fScaleY   The scale factor on Y axis.
+     */
+    virtual void setScaleY(float fScaleY);
+};
+
+class RandomOwn {
+    
+public: 
+    static RandomOwn* getInstance(long long seed);
+    
+    int nextInt(int n);
+};
+
+
+ 
+

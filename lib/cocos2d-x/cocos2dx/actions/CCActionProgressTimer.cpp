@@ -91,7 +91,15 @@ void CCProgressTo::startWithTarget(CCNode *pTarget)
 
 void CCProgressTo::update(float time)
 {
-    ((kProgressTimerCast)(m_pTarget))->setPercentage(m_fFrom + (m_fTo - m_fFrom) * time);
+    //add by lxc 修改
+    if (m_fFrom>m_fTo) {
+        ((kProgressTimerCast)(m_pTarget))->setPercentage(m_fFrom - ( m_fFrom-m_fTo ) * time);
+    }
+    if (m_fFrom<m_fTo) {
+        ((kProgressTimerCast)(m_pTarget))->setPercentage(m_fFrom + (m_fTo - m_fFrom) * time);
+    }
+    //end
+//    ((kProgressTimerCast)(m_pTarget))->setPercentage(m_fFrom + (m_fTo - m_fFrom) * time);
 }
 
 // implementation of CCProgressFromTo

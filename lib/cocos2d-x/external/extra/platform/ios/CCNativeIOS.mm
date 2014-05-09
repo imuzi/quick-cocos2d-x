@@ -210,7 +210,9 @@ static CCNativeIOS *s_sharedInstance;
         stack->executeFunctionByHandler(alertViewLuaListener_, 1);
     }
 #endif
-    [self removeAlertView];
+    //edit by lxc
+   // [self removeAlertView];
+    //end
 }
 
 @end

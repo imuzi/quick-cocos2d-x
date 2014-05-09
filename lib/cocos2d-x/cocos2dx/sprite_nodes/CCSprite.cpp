@@ -1134,4 +1134,108 @@ CCTexture2D* CCSprite::getTexture(void)
     return m_pobTexture;
 }
 
+//add by wls
+void CCSprite::enableGray()
+{
+    CCGLProgram *p = new CCGLProgram();
+    const GLchar* pszFragSource =
+    "#ifdef GL_ES \n \
+    precision mediump float; \n \
+    #endif \n \
+    uniform sampler2D u_texture; \n \
+    varying vec2 v_texCoord; \n \
+    varying vec4 v_fragmentColor; \n \
+    void main(void) \n \
+    { \n \
+    // Convert to greyscale using NTSC weightings \n \
+    vec4 col = texture2D(u_texture, v_texCoord); \n \
+    float grey = dot(col.rgb, vec3(0.299, 0.587, 0.114)); \n \
+    gl_FragColor = vec4(grey, grey, grey, col.a); \n \
+    }";
+    
+    const GLchar* ccPositionTextureColor_vert=
+    "													\n\
+    attribute vec4 a_position;							\n\
+    attribute vec2 a_texCoord;							\n\
+    attribute vec4 a_color;								\n\
+    \n\
+    #ifdef GL_ES										\n\
+    varying lowp vec4 v_fragmentColor;					\n\
+    varying mediump vec2 v_texCoord;					\n\
+    #else												\n\
+    varying vec4 v_fragmentColor;						\n\
+    varying vec2 v_texCoord;							\n\
+    #endif												\n\
+    \n\
+    void main()											\n\
+    {													\n\
+    gl_Position = CC_MVPMatrix * a_position;		\n\
+	v_fragmentColor = a_color;						\n\
+	v_texCoord = a_texCoord;						\n\
+    }													\n\
+    ";
+    
+    p->initWithVertexShaderByteArray(ccPositionTextureColor_vert, pszFragSource);
+    setShaderProgram(p);
+    p->release();
+    
+    getShaderProgram()->addAttribute(kCCAttributeNamePosition, kCCVertexAttrib_Position);
+    getShaderProgram()->addAttribute(kCCAttributeNameColor, kCCVertexAttrib_Color);
+    getShaderProgram()->addAttribute(kCCAttributeNameTexCoord, kCCVertexAttrib_TexCoords);
+    getShaderProgram()->link();
+    getShaderProgram()->updateUniforms();
+    
+}
+
+void CCSprite::disableGray()
+{
+    CCGLProgram *p = new CCGLProgram();
+    const GLchar* pszFragSource =
+    "#ifdef GL_ES \n \
+    precision mediump float; \n \
+    #endif \n \
+    uniform sampler2D u_texture; \n \
+    varying vec2 v_texCoord; \n \
+    varying vec4 v_fragmentColor; \n \
+    void main(void) \n \
+    { \n \
+    // Convert to greyscale using NTSC weightings \n \
+    vec4 col = texture2D(u_texture, v_texCoord); \n \
+    gl_FragColor = vec4(col.r, col.g, col.b, col.a); \n \
+    }";
+    
+    const GLchar* ccPositionTextureColor_vert=
+    "													\n\
+    attribute vec4 a_position;							\n\
+    attribute vec2 a_texCoord;							\n\
+    attribute vec4 a_color;								\n\
+    \n\
+    #ifdef GL_ES										\n\
+    varying lowp vec4 v_fragmentColor;					\n\
+    varying mediump vec2 v_texCoord;					\n\
+    #else												\n\
+    varying vec4 v_fragmentColor;						\n\
+    varying vec2 v_texCoord;							\n\
+    #endif												\n\
+    \n\
+    void main()											\n\
+    {													\n\
+    gl_Position = CC_MVPMatrix * a_position;		\n\
+	v_fragmentColor = a_color;						\n\
+	v_texCoord = a_texCoord;						\n\
+    }													\n\
+    ";
+    
+    p->initWithVertexShaderByteArray(ccPositionTextureColor_vert, pszFragSource);
+    setShaderProgram(p);
+    p->release();
+    
+    getShaderProgram()->addAttribute(kCCAttributeNamePosition, kCCVertexAttrib_Position);
+    getShaderProgram()->addAttribute(kCCAttributeNameColor, kCCVertexAttrib_Color);
+    getShaderProgram()->addAttribute(kCCAttributeNameTexCoord, kCCVertexAttrib_TexCoords);
+    getShaderProgram()->link();
+    getShaderProgram()->updateUniforms();
+}
+//add end
+
 NS_CC_END

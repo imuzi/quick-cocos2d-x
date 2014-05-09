@@ -14,6 +14,10 @@
 project.xcworkspace/
 xcuserdata/
 
+bin/res
+bin/scripts
+bin/sdny
+
 lib/cocos2d-x/cocos2dx/platform/android/java/bin
 lib/cocos2d-x/cocos2dx/platform/android/java/gen
 

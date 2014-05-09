@@ -5,6 +5,12 @@
 #include "tolua_CursorTextField.h"
 #include "../ui/UIUtil.h"
 
+//add by lxc
+#include "tolua_CCControl.h"
+#include "tolua_CCScrollView.h"
+#include "tolua_CCTableView.h"
+//edn
+
 const char * getFullPathForFile(const char *p){
 #if COCOS2D_VERSION < 0x00020100
 	return CCFileUtils::sharedFileUtils()->fullPathFromRelativePath(p);
@@ -355,7 +361,153 @@ static int tolua_LuaProxy_getNodeWithType(lua_State *l){
 	return 1;
 }
 
+//add by lxc
+
+TOLUA_API int tolua_CC_Extension_open(lua_State* l){
+	tolua_open(l);
+    
+	tolua_usertype(l, "CCControl");
+	tolua_usertype(l, "CCControlButton");
+    
+	tolua_usertype(l, "CCScrollView");
+	tolua_usertype(l, "CCTableView");
+	tolua_usertype(l, "CCTableViewCell");
+	tolua_usertype(l, "CCTableViewDataSource");
+	tolua_usertype(l, "CCTableViewDelegate");
+	tolua_module(l, NULL, 0);
+	tolua_beginmodule(l, NULL);
+    tolua_cclass(l, "CCControl", "CCControl", "CCLayer", NULL);
+    tolua_beginmodule(l, "CCControl");
+    tolua_function(l, "isEnabled", tolua_CCControl_isEnabled);
+    tolua_function(l, "isHighlighted", tolua_CCControl_isHighlighted);
+    tolua_function(l, "isSelected", tolua_CCControl_isSelected);
+    tolua_function(l, "setSelected", tolua_CCControl_setSelected);
+    tolua_function(l, "getState", tolua_CCControl_getState);
+    tolua_function(l, "isTouchInside", tolua_CCControl_isTouchInside);
+    tolua_function(l, "getTouchLocation", tolua_CCControl_getTouchLocation);
+    tolua_function(l, "hasVisibleParents", tolua_CCControl_hasVisibleParents);
+    tolua_function(l, "sendActionsForControlEvents", tolua_CCControl_sendActionsForControlEvents);
+    tolua_endmodule(l);
+    tolua_constant(l, "CCControlEventTouchDown", CCControlEventTouchDown);
+    tolua_constant(l, "CCControlEventTouchDragInside", CCControlEventTouchDragInside);
+    tolua_constant(l, "CCControlEventTouchDragOutside", CCControlEventTouchDragOutside);
+    tolua_constant(l, "CCControlEventTouchDragEnter", CCControlEventTouchDragEnter);
+    tolua_constant(l, "CCControlEventTouchDragExit", CCControlEventTouchDragExit);
+    tolua_constant(l, "CCControlEventTouchUpInside", CCControlEventTouchUpInside);
+    tolua_constant(l, "CCControlEventTouchUpOutside", CCControlEventTouchUpOutside);
+    tolua_constant(l, "CCControlEventTouchCancel", CCControlEventTouchCancel);
+    tolua_constant(l, "CCControlEventValueChanged", CCControlEventValueChanged);
+    tolua_cclass(l, "CCControlButton", "CCControlButton", "CCControl", NULL);
+    tolua_beginmodule(l, "CCControlButton");
+    tolua_function(l, "create", tolua_CCControlButton_create);
+    tolua_function(l, "getBackgroundSprite", tolua_CCControlButton_getBackgroundSprite);
+    tolua_function(l, "setBackgroundSprite", tolua_CCControlButton_setBackgroundSprite);
+    tolua_function(l, "getBackgroundSpriteForState", tolua_CCControlButton_getBackgroundSpriteForState);
+    tolua_function(l, "setBackgroundSpriteForState", tolua_CCControlButton_setBackgroundSpriteForState);
+    tolua_function(l, "setBackgroundSpriteFrameForState", tolua_CCControlButton_setBackgroundSpriteFrameForState);
+    tolua_function(l, "getCurrentTitle", tolua_CCControlButton_getCurrentTitle);
+    tolua_function(l, "setEnabled", tolua_CCControlButton_setEnabled);
+    tolua_function(l, "getLabelAnchorPoint", tolua_CCControlButton_getLabelAnchorPoint);
+    tolua_function(l, "setLabelAnchorPoint", tolua_CCControlButton_setLabelAnchorPoint);
+    tolua_function(l, "setMargins", tolua_CCControlButton_setMargins);
+    tolua_function(l, "getOpacity", tolua_CCControlButton_getOpacity);
+    tolua_function(l, "setOpacity", tolua_CCControlButton_setOpacity);
+    tolua_function(l, "getPreferredSize", tolua_CCControlButton_getPreferredSize);
+    tolua_function(l, "setPreferredSize", tolua_CCControlButton_setPreferredSize);
+    tolua_function(l, "isPushed", tolua_CCControlButton_isPushed);
+    tolua_function(l, "getTitleLabel", tolua_CCControlButton_getTitleLabel);
+    tolua_function(l, "setTitleLabel", tolua_CCControlButton_setTitleLabel);
+    tolua_function(l, "getTitleBMFontForState", tolua_CCControlButton_getTitleBMFontForState);
+    tolua_function(l, "setTitleBMFontForState", tolua_CCControlButton_setTitleBMFontForState);
+    tolua_function(l, "getTitleColorForState", tolua_CCControlButton_getTitleColorForState);
+    tolua_function(l, "setTitleColorForState", tolua_CCControlButton_setTitleColorForState);
+    tolua_function(l, "getTitleTTFForState", tolua_CCControlButton_getTitleTTFForState);
+    tolua_function(l, "setTitleTTFForState", tolua_CCControlButton_setTitleTTFForState);
+    tolua_function(l, "getTitleForState", tolua_CCControlButton_getTitleForState);
+    tolua_function(l, "setTitleForState", tolua_CCControlButton_setTitleForState);
+    tolua_endmodule(l);
+    tolua_constant(l, "CCControlStateNormal", CCControlStateNormal);
+    tolua_constant(l, "CCControlStateHighlighted", CCControlStateHighlighted);
+    tolua_constant(l, "CCControlStateDisabled", CCControlStateDisabled);
+    tolua_constant(l, "CCControlStateSelected", CCControlStateSelected);
+    
+    tolua_constant(l, "kCCScrollViewDirectionNone", kCCScrollViewDirectionNone);
+    tolua_constant(l, "kCCScrollViewDirectionHorizontal", kCCScrollViewDirectionHorizontal);
+    tolua_constant(l, "kCCScrollViewDirectionVertical", kCCScrollViewDirectionVertical);
+    tolua_constant(l, "kCCScrollViewDirectionBoth", kCCScrollViewDirectionBoth);
+    tolua_cclass(l, "CCScrollView", "CCScrollView", "CCLayer", NULL);
+    tolua_beginmodule(l, "CCScrollView");
+    tolua_function(l, "create", tolua_CCScrollView_create);
+    tolua_function(l, "isBounceable", tolua_CCScrollView_isBounceable);
+    tolua_function(l, "setBounceable", tolua_CCScrollView_setBounceable);
+    tolua_function(l, "addChild", tolua_CCScrollView_addChild);
+    tolua_function(l, "isClippingToBounds", tolua_CCScrollView_isClippingToBounds);
+    tolua_function(l, "setClippingToBounds", tolua_CCScrollView_setClippingToBounds);
+    tolua_function(l, "getContainer", tolua_CCScrollView_getContainer);
+    tolua_function(l, "setContainer", tolua_CCScrollView_setContainer);
+    tolua_function(l, "getContentOffset", tolua_CCScrollView_getContentOffset);
+    tolua_function(l, "setContentOffset", tolua_CCScrollView_setContentOffset);
+    tolua_function(l, "setContentOffsetInDuration", tolua_CCScrollView_setContentOffsetInDuration);
+    tolua_function(l, "getContentSize", tolua_CCScrollView_getContentSize);
+    tolua_function(l, "setContentSize", tolua_CCScrollView_setContentSize);
+    tolua_function(l, "getDirection", tolua_CCScrollView_getDirection);
+    tolua_function(l, "setDirection", tolua_CCScrollView_setDirection);
+    tolua_function(l, "isDragging", tolua_CCScrollView_isDragging);
+    tolua_function(l, "isNodeVisible", tolua_CCScrollView_isNodeVisible);
+    tolua_function(l, "isTouchMoved", tolua_CCScrollView_isTouchMoved);
+    tolua_function(l, "getViewSize", tolua_CCScrollView_getViewSize);
+    tolua_function(l, "setViewSize", tolua_CCScrollView_setViewSize);
+    tolua_function(l, "getZoomScale", tolua_CCScrollView_getZoomScale);
+    tolua_function(l, "setZoomScale", tolua_CCScrollView_setZoomScale);
+    tolua_function(l, "setZoomScaleInDuration", tolua_CCScrollView_setZoomScaleInDuration);
+    tolua_endmodule(l);
+    tolua_constant(l, "kCCTableViewFillTopDown", kCCTableViewFillTopDown);
+    tolua_constant(l, "kCCTableViewFillBottomUp", kCCTableViewFillBottomUp);
+    tolua_cclass(l, "CCTableViewDataSource", "CCTableViewDataSource", "", NULL);
+    tolua_cclass(l, "CCTableViewDelegate", "CCTableViewDelegate", "", NULL);
+    tolua_cclass(l, "CCTableView", "CCTableView", "CCScrollView", NULL);
+    tolua_beginmodule(l, "CCTableView");
+    tolua_function(l, "create", tolua_CCTableView_create);
+    tolua_function(l, "getDataSource", tolua_CCTableView_getDataSource);
+    tolua_function(l, "setDataSource", tolua_CCTableView_setDataSource);
+    tolua_function(l, "getDelegate", tolua_CCTableView_getDelegate);
+    tolua_function(l, "setDelegate", tolua_CCTableView_setDelegate);
+    tolua_function(l, "getVerticalFillOrder", tolua_CCTableView_getVerticalFillOrder);
+    tolua_function(l, "setVerticalFillOrder", tolua_CCTableView_setVerticalFillOrder);
+    tolua_function(l, "updateCellAtIndex", tolua_CCTableView_updateCellAtIndex);
+    tolua_function(l, "insertCellAtIndex", tolua_CCTableView_insertCellAtIndex);
+    tolua_function(l, "removeCellAtIndex", tolua_CCTableView_removeCellAtIndex);
+    tolua_function(l, "reloadData", tolua_CCTableView_reloadData);
+    tolua_function(l, "dequeueCell", tolua_CCTableView_dequeueCell);
+    tolua_function(l, "cellAtIndex", tolua_CCTableView_cellAtIndex);
+    tolua_endmodule(l);
+    tolua_cclass(l, "CCTableViewCell", "CCTableViewCell", "CCNode", NULL);
+    tolua_beginmodule(l, "CCTableViewCell");
+    tolua_function(l, "create", tolua_CCTableViewCell_create);
+    tolua_function(l, "getIdx", tolua_CCTableViewCell_getIdx);
+    tolua_function(l, "setIdx", tolua_CCTableViewCell_setIdx);
+    tolua_function(l, "reset", tolua_CCTableViewCell_reset);
+    tolua_function(l, "getObjectID", tolua_CCTableViewCell_getObjectID);
+    tolua_function(l, "setObjectID", tolua_CCTableViewCell_setObjectID);
+    tolua_endmodule(l);
+    
+    //    tolua_cclass(l, "CCGLProgram", "CCGLProgram", "CCObject", NULL);
+    //    tolua_beginmodule(l, "CCGLProgram");
+    //    tolua_function(l, "addAttribute", tolua_CCGLProgram_addAttribute);
+    //    tolua_function(l, "getUniformLocationForName", tolua_CCGLProgram_getUniformLocationForName);
+    //    tolua_function(l, "setUniformLocationWith", tolua_CCGLProgram_setUniformLocationWith);
+    //    tolua_endmodule(l);
+	tolua_endmodule(l);
+	return 1;
+}
+//add end
+
+
+
 TOLUA_API int luaopen_LuaProxy(lua_State* l){
+    //add by lxc
+    tolua_CC_Extension_open(l);
+    //add end
 	tolua_open(l);
 	tolua_usertype(l, "LuaProxy"); toluafix_add_type_mapping(typeid(LuaProxy).hash_code(), "LuaProxy");
 	tolua_usertype(l, "CCCameraEyeAction"); toluafix_add_type_mapping(typeid(CCCameraEyeAction).hash_code(), "CCCameraEyeAction");
@@ -364,6 +516,7 @@ TOLUA_API int luaopen_LuaProxy(lua_State* l){
 	tolua_usertype(l, "LuaEventHandler"); toluafix_add_type_mapping(typeid(LuaEventHandler).hash_code(), "LuaEventHandler");
 	tolua_usertype(l, "LuaTableView"); toluafix_add_type_mapping(typeid(LuaTableView).hash_code(), "LuaTableView");
 	tolua_usertype(l, "UIUtil"); toluafix_add_type_mapping(typeid(UIUtil).hash_code(), "UIUtil");
+    
 	tolua_module(l, NULL, 0);
 	tolua_beginmodule(l, NULL);
 		tolua_function(l, "copyAssetFileToData", tolua_LuaProxy_copyAssetFileToData);
@@ -470,3 +623,4 @@ TOLUA_API int luaopen_LuaProxy(lua_State* l){
 	tolua_endmodule(l);
 	return 1;
 }
+

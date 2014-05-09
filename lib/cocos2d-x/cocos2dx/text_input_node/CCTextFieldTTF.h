@@ -139,6 +139,15 @@ public:
     virtual const ccColor3B& getColorSpaceHolder();
     virtual void setColorSpaceHolder(const ccColor3B& color);
 
+    //add by wls
+    virtual void keyboardWillHide(CCIMEKeyboardNotificationInfo& info);
+    void registerScriptTextFieldHandler(int handler);
+    void unregisterScriptTextFieldHandler(void);
+    int m_nScriptTextFieldHandler;
+    int strMaxLen;
+    void setMaxLength(int len);
+    int getCHLenOfChar(const char* src, int chLen);
+    //end
     // input text property
 public:
     virtual void setString(const char *text);

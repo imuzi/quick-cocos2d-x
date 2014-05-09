@@ -19,40 +19,114 @@ if CONFIG_SCREEN_WIDTH == nil or CONFIG_SCREEN_HEIGHT == nil then
     CONFIG_SCREEN_HEIGHT = h
 end
 
-if not CONFIG_SCREEN_AUTOSCALE then
-    if w > h then
-        CONFIG_SCREEN_AUTOSCALE = "FIXED_HEIGHT"
-    else
-        CONFIG_SCREEN_AUTOSCALE = "FIXED_WIDTH"
+-- if not CONFIG_SCREEN_AUTOSCALE then
+--     if w > h then
+--         CONFIG_SCREEN_AUTOSCALE = "FIXED_HEIGHT"
+--     else
+--         CONFIG_SCREEN_AUTOSCALE = "FIXED_WIDTH"
+--     end
+-- else
+--     CONFIG_SCREEN_AUTOSCALE = string.upper(CONFIG_SCREEN_AUTOSCALE)
+-- end
+
+-- local scale, scaleX, scaleY
+
+-- if CONFIG_SCREEN_AUTOSCALE then
+--     if type(CONFIG_SCREEN_AUTOSCALE_CALLBACK) == "function" then
+--         scaleX, scaleY = CONFIG_SCREEN_AUTOSCALE_CALLBACK(w, h, device.model)
+--     end
+
+--     if not scaleX or not scaleY then
+--         scaleX, scaleY = w / CONFIG_SCREEN_WIDTH, h / CONFIG_SCREEN_HEIGHT
+--     end
+
+--     if CONFIG_SCREEN_AUTOSCALE == "FIXED_WIDTH" then
+--         scale = scaleX
+--         CONFIG_SCREEN_HEIGHT = h / scale
+--     elseif CONFIG_SCREEN_AUTOSCALE == "FIXED_HEIGHT" then
+--         scale = scaleY
+--         CONFIG_SCREEN_WIDTH = w / scale
+--     else
+--         scale = 1.0
+--         echoError(string.format("display - invalid CONFIG_SCREEN_AUTOSCALE \"%s\"", CONFIG_SCREEN_AUTOSCALE))
+--     end
+
+--     glview:setDesignResolutionSize(CONFIG_SCREEN_WIDTH, CONFIG_SCREEN_HEIGHT, kResolutionNoBorder)
+-- end
+--add by lxc
+local function checkScale(w, h)
+    local scale = 1
+    local wscale, hscale = w / CONFIG_SCREEN_WIDTH, h / CONFIG_SCREEN_HEIGHT
+    if CONFIG_SCREEN_AUTOSCALE == "FIXED_WIDTH" then
+        scale = wscale
+    elseif CONFIG_SCREEN_AUTOSCALE == "FIXED_WIDTH_PRIOR" then
+        if wscale > hscale then
+            scale = wscale
+        else
+            scale = hscale
+        end
+    elseif CONFIG_SCREEN_AUTOSCALE == "FIXED_HEIGHT" then
+        scale = hscale
+    elseif CONFIG_SCREEN_AUTOSCALE == "FIXED_HEIGHT_PRIOR" then
+        if wscale < hscale then
+            scale = wscale
+        else
+            scale = hscale
+        end
     end
-else
-    CONFIG_SCREEN_AUTOSCALE = string.upper(CONFIG_SCREEN_AUTOSCALE)
+    return scale, wscale, hscale
 end
 
-local scale, scaleX, scaleY
+local scale, wscale, hscale = 1, 1, 1
+if type(CONFIG_SCREEN_AUTOSCALE) == "function" then
+    CONFIG_SCREEN_AUTOSCALE(w, h)
+    glview:setDesignResolutionSize(CONFIG_SCREEN_WIDTH, CONFIG_SCREEN_HEIGHT, kResolutionNoBorder)
+elseif CONFIG_SCREEN_AUTOSCALE then
+    scale, wscale, hscale = checkScale(w, h)
 
-if CONFIG_SCREEN_AUTOSCALE then
-    if type(CONFIG_SCREEN_AUTOSCALE_CALLBACK) == "function" then
-        scaleX, scaleY = CONFIG_SCREEN_AUTOSCALE_CALLBACK(w, h, device.model)
+    if type(CONFIG_RESOURCE_SIZE) == "table" then
+        local selectedSize, lastSize
+        for i, size in ipairs(CONFIG_RESOURCE_SIZE) do
+            local maxContentScale = size.scale or 99999
+            if scale <= maxContentScale then
+                selectedSize = size
+                break
+            end
+            lastSize = size
+        end
+
+        if not selectedSize and lastSize then selectedSize = lastSize end
+        CCFileUtils:sharedFileUtils():addSearchPath(selectedSize.path)
+
+        w = w / scale * selectedSize.scale
+        h = h / scale * selectedSize.scale
+        scale, wscale, hscale = checkScale(w, h)
     end
 
-    if not scaleX or not scaleY then
-        scaleX, scaleY = w / CONFIG_SCREEN_WIDTH, h / CONFIG_SCREEN_HEIGHT
-    end
-
+    CONFIG_SCREEN_AUTOSCALE = string.upper(CONFIG_SCREEN_AUTOSCALE)
     if CONFIG_SCREEN_AUTOSCALE == "FIXED_WIDTH" then
-        scale = scaleX
         CONFIG_SCREEN_HEIGHT = h / scale
+    elseif CONFIG_SCREEN_AUTOSCALE == "FIXED_WIDTH_PRIOR" then
+        if wscale > hscale then
+            CONFIG_SCREEN_HEIGHT = h / scale
+        else
+            CONFIG_SCREEN_WIDTH = w / scale
+        end
     elseif CONFIG_SCREEN_AUTOSCALE == "FIXED_HEIGHT" then
-        scale = scaleY
         CONFIG_SCREEN_WIDTH = w / scale
+    elseif CONFIG_SCREEN_AUTOSCALE == "FIXED_HEIGHT_PRIOR" then
+        if wscale < hscale then
+            CONFIG_SCREEN_HEIGHT = h / scale
+        else
+            CONFIG_SCREEN_WIDTH = w / scale
+        end
     else
-        scale = 1.0
-        echoError(string.format("display - invalid CONFIG_SCREEN_AUTOSCALE \"%s\"", CONFIG_SCREEN_AUTOSCALE))
+        echoError(format("display - invalid CONFIG_SCREEN_AUTOSCALE \"%s\"", CONFIG_SCREEN_AUTOSCALE))
     end
 
     glview:setDesignResolutionSize(CONFIG_SCREEN_WIDTH, CONFIG_SCREEN_HEIGHT, kResolutionNoBorder)
 end
+
 
 local winSize = sharedDirector:getWinSize()
 display.contentScaleFactor = scale

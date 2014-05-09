@@ -1,6 +1,6 @@
 /*
 ** Lua binding: cocos2dx_extra_ios_iap_luabinding
-** Generated automatically by tolua++-1.0.92 on 04/14/14 12:34:38.
+** Generated automatically by tolua++-1.0.92 on Thu May  8 15:42:49 2014.
 */
 
 #include "cocos2dx_extra_ios_iap_luabinding.h"
